@@ -1,0 +1,22 @@
+export const NavbarMenu = [
+    {
+        id:1,
+        title:"home",
+        link:"/"
+    },
+    {
+        id:2,
+        title:"tgbgbgv",
+        link:"/"
+    },
+    {
+        id:2,
+        title:"tgbgbgv",
+        link:"/"
+    }, 
+    {
+        id:2,
+        title:"tgbgbgv",
+        link:"/"
+    },
+]
