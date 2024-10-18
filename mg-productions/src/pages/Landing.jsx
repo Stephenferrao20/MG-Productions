@@ -1,10 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
+import MusicCard from '../components/MusicCard';
 
 export default function Landing() {
   return (
-    <div>
-        <Navbar/>
+    <div >
+        <MusicCard/>
     </div>
   )
 }
