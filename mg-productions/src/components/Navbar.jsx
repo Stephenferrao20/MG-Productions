@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import Sidebar from './sideBar';
+import MainContent from './MainContent';
 
-export default function Navbar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const Navbar = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <div className="flex h-screen bg-gray-800">
       
-    <Sidebar isSidebarOpen={isSidebarOpen}/>
+    <Sidebar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-y-auto">
         <div className="flex items-center justify-between h-16 bg-gray-900 border-b border-gray-900">
           <div className="flex items-center px-4">
-            <button onClick={toggleSidebar} className="text-gray-500 focus:outline-none focus:text-gray-700 md:hidden">
+            <button onClick={toggleSidebar} className="text-gray-500 focus:outline-none focus:text-gray-700 md:hidden" >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -53,11 +54,10 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-        <div className="p-4">
-          <h1 className="text-2xl font-bold">Welcome to Daystar Daycare</h1>
-          <p className="mt-2 text-gray-600">Raising tomorrow's leaders.</p>
-        </div>
+        <MainContent/>
       </div>
     </div>
   );
 }
+
+export default Navbar;
