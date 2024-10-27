@@ -1,48 +1,33 @@
-// Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import DropdownMenu from './DropdownMenu';
 
-const Navbar = ({ setSidebarOpen }) => {
-  const toggleSidebar = () => {
-    setSidebarOpen(prev => !prev);
+const Navbar = () => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
   };
 
   return (
-    <div className="flex items-center justify-between h-16 bg-gray-900 border-b border-gray-100">
-      <div className="flex items-center px-4">
-        <button
-          onClick={toggleSidebar}
-          className="text-gray-500 focus:outline-none focus:text-gray-700 md:hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+    <header className="sticky top-0 z-10 bg-white shadow-md">
+      <div className="container mx-auto flex p-5 items-center justify-between">
+        <a className="flex items-center text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" className="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
-        </button>
-        <input
-          className="mx-4 w-full border rounded-md px-4 py-2"
-          type="text"
-          placeholder="Search"
-        />
-      </div>
-      <div className="flex items-center pr-4">
-        <button className="flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l-7-7 7-7m5 14l7-7-7-7" />
-          </svg>
+          <span className="ml-3 text-xl">Tailblocks</span>
+        </a>
+        
+        <button onClick={toggleDropdown} className="mt-2 rounded-full bg-gray-100 relative">
+          <img className="h-10 w-10 rounded-full" src="https://avatars.githubusercontent.com/u/35387401?v=4" alt="User Avatar" />
+          {isDropdownOpen && (
+            
+              <DropdownMenu/>
+            
+          )}
         </button>
       </div>
-    </div>
+    </header>
   );
 };
 
