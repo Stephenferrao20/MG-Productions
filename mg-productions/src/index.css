@@ -16,18 +16,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* width */
-::-webkit-scrollbar {
-  width: 2px;
-}
-/* Track */
-::-webkit-scrollbar-track {
-  
-}
+@layer utilities {
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f0f0f0; /* Customize thumb and track colors */
+  }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 6px;
-  height: 50px;
+  /* For webkit browsers */
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 9999px;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 9999px;
+  }
+
+  /* Dark mode adjustments */
+  .dark .scrollbar::-webkit-scrollbar-track {
+    background: #2d2d2d;
+  }
+  .dark .scrollbar::-webkit-scrollbar-thumb {
+    background: #555;
+  }
 }
