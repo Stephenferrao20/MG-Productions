@@ -6,6 +6,8 @@ import Landing from './pages/Landing';
 import Search from './pages/Search';
 import Profile from './pages/User/Profile';
 import Dashboard from './pages/Admin/Dashboard';
+import Favorite from './pages/Favorite';
+import MusicPlayer from './pages/MusicPlayer';
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
               <Route path="/Search" element={<Search />} />
               <Route path="/Profile" element={<Profile />} />
               <Route path="/Dashboard" element={<Dashboard />} />
+              <Route path="/Favorite" element={<Favorite />} />
+              <Route path="/Music" element={<MusicPlayer />} />
             </Routes>
           </div>
         </div>

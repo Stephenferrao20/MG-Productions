@@ -20,4 +20,4 @@ function ChatMember() {
   )
 }
 
-export default ChatMember
+export default ChatMember;

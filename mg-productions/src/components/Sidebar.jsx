@@ -19,10 +19,10 @@ const Sidebar = () => {
             <FaSearch className='h-5 w-5'/>
           </Link>
           
-          <button className="p-2 hover:bg-gray-50 rounded-xl align-middle justify-center h-6 text-gray-900">
+          <Link className="p-2 hover:bg-gray-50 rounded-xl align-middle justify-center h-6 text-gray-900"to={'/Music'} >
             <MdOutlineDarkMode className='text-xl h-6 w-6' />
-          </button>
-          <Link className="group relative p-2 hover:bg-gray-50 rounded-xl text-gray-900 mt-2">
+          </Link>
+          <Link className="group relative p-2 hover:bg-gray-50 rounded-xl text-gray-900 mt-2" to={'/Favorite'}>
             <FaRegHeart className='h-5 w-5'/>
           </Link>
         </nav>
