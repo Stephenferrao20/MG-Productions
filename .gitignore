@@ -10,6 +10,7 @@ lerna-debug.log*
 /mg-productions/node_modules
 /Backend/node_modules
 Backend/.env
+mg-productions/src/.env
 dist
 dist-ssr
 *.local
