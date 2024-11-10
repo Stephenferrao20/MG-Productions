@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import DropdownMenu from './DropdownMenu';
 import LoginButton from './LoginButton';
+import { getAuth } from 'firebase/auth'; // Import Firebase auth
+import { app } from '../config/firebase.config';
 
-const Navbar = () => {
+const Navbar = ({setAuth}) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const { isAuthenticated , user } = useAuth0();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dropdownRef = useRef(null); // Create a ref for the dropdown menu
+  const firebaseAuth = getAuth(app); // Initialize Firebase auth
 
+  // Toggle the dropdown menu
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
@@ -22,12 +25,22 @@ const Navbar = () => {
 
     // Add event listener
     document.addEventListener('mousedown', handleClickOutside);
-    
-    // Clean up the event listener on component unmount
+
+    // Check if the user is authenticated on initial render
+    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuthenticated(true); // Set authenticated state to true
+      } else {
+        setIsAuthenticated(false); // Set authenticated state to false
+      }
+    });
+
+    // Cleanup the event listener and unsubscribe from auth state change
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      unsubscribe();
     };
-  }, []);
+  }, [firebaseAuth]);
 
   return (
     <header className="sticky top-0 z-10 bg-white shadow-md">
@@ -47,19 +60,19 @@ const Navbar = () => {
         </a>
 
         {isAuthenticated ? (
-          <div ref={dropdownRef} className="relative"> 
+          <div ref={dropdownRef} className="relative">
             <button onClick={toggleDropdown} className="mt-2 rounded-full bg-gray-100 relative">
               <img
                 className="h-10 w-10 rounded-full"
-                src={user.picture}
-                alt={user.name}
+                src={''} // Replace with the user profile image URL
+                alt="User"
               />
             </button>
-            
+
             {isDropdownOpen && <DropdownMenu />}
           </div>
         ) : (
-          <LoginButton />
+          <LoginButton setAuth={setAuth}/>
         )}
       </div>
     </header>

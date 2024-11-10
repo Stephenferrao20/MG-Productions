@@ -1,10 +1,39 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import React from 'react';
+import React, { useState } from 'react';
+import Login from './Login';
+import SignUp from './SignUp';
 
-const LoginButton = () => {
-  const { loginWithRedirect } = useAuth0();
+const LoginButton = ({setAuth}) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
-  return <button onClick={() => loginWithRedirect()} className="bg-blue-600 text-sm text-gray-50 p-2 rounded-md ">Log In</button>;
+  const openLogin = () => {
+    setIsLoginOpen(true);
+    setIsSignUpOpen(false); // Ensure SignUp is closed
+  };
+
+  const closeLogin = () => {
+    setIsLoginOpen(false);
+  };
+
+  const openSignUp = () => {
+    setIsSignUpOpen(true);
+    setIsLoginOpen(false); // Ensure Login is closed
+  };
+
+  const closeSignUp = () => {
+    setIsSignUpOpen(false);
+  };
+
+  return (
+    <div>
+      <button onClick={openLogin} className="bg-blue-600 text-sm text-gray-50 p-2 rounded-md">
+        Log In
+      </button>
+
+      {isLoginOpen && <Login onClose={closeLogin} onSignUpOpen={openSignUp} setAuth={setAuth}/>}
+      {isSignUpOpen && <SignUp onClose={closeSignUp} onLoginOpen={openLogin} />}
+    </div>
+  );
 };
 
 export default LoginButton;
