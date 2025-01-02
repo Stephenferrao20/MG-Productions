@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import {useNavigate } from 'react-router-dom';
 import { app } from '../config/firebase.config';
 import {getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import { useStateValue } from '../context/StateProvider';
+import { validateUser } from '../api';
+import { actionType } from '../context/actionType';
 
 function Login({ onClose, onSignUpOpen , setAuth}) {
 
@@ -9,6 +12,8 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
     const provider = new GoogleAuthProvider(); 
 
     const navigate = useNavigate();
+
+    const [{user},dispatch] = useStateValue();
 
     const loginWithGoogle = async () =>{
       await signInWithPopup(firebaseAuth,provider).then((userCred) =>{
@@ -20,7 +25,13 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
         firebaseAuth.onAuthStateChanged((userCred) => {
           if(userCred){
             userCred.getIdToken().then((token) =>{
-               console.log(token); 
+               validateUser(token)
+               .then((data) => {
+                dispatch({
+                  type : actionType.SET_USER,
+                  user : data,
+                })
+               })
             }
             )
             navigate("/",{replace:true})
@@ -28,6 +39,10 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
           }
           else{
             setAuth(false);
+            dispatch({
+              type : actionType.SET_USER,
+              user : null,
+            })
             navigate("/login")
           }
         });

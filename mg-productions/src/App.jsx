@@ -1,5 +1,6 @@
+// App.jsx
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom'; // Removed Router import
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
@@ -10,46 +11,59 @@ import Favorite from './pages/Favorite';
 import MusicPlayer from './pages/MusicPlayer';
 import { getAuth } from 'firebase/auth';
 import { app } from './config/firebase.config';
+import { validateUser } from './api';
+import { useStateValue } from './context/StateProvider';
+import { actionType } from './context/actionType';
 
 const App = () => {
-  const firebaseAuth = getAuth(app);
-  const navigate = useNavigate();
-  const [auth, setAuth] = useState(false || window.localStorage.getItem("auth") === "true");
+    const firebaseAuth = getAuth(app);
+    const navigate = useNavigate();
+    const [auth, setAuth] = useState(false || window.localStorage.getItem('auth') === 'true');
+    const [{ user }, dispatch] = useStateValue();
 
-  useEffect(() => {
-    firebaseAuth.onAuthStateChanged((userCred) => {
-      if(userCred){
-        userCred.getIdToken().then((token) => {
-          console.log(token);
-          
-        })
-      }
-      else{
-        setAuth(false);
-        window.localStorage.setItem("auth","false");
-        navigate("/login");
-      }
-    });
-  }, []);
+    useEffect(() => {
+        firebaseAuth.onAuthStateChanged((userCred) => {
+            if (userCred) {
+                userCred.getIdToken().then((token) => {
+                    validateUser(token).then((data) => {
+                        console.log(token);
+                        
+                        dispatch({
+                            type: actionType.SET_USER,
+                            user: data,
+                        });
+                    });
+                });
+            } else {
+                setAuth(false);
+                window.localStorage.setItem('auth', 'false');
+                dispatch({
+                  type: actionType.SET_USER,
+                  user : null,
+                });
+                navigate('/login');
+            }
+        });
+    }, [firebaseAuth, navigate, dispatch]);
 
-  return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-y-auto"> {/* Enable vertical scrolling */}
-        <Navbar setAuth={setAuth}/>
-        <div className="flex-1 p-4">
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/Search" element={<Search />} />
-            <Route path="/Profile" element={<Profile />} />
-            <Route path="/Dashboard" element={<Dashboard />} />
-            <Route path="/Favorite" element={<Favorite />} />
-            <Route path="/Music" element={<MusicPlayer />} />
-          </Routes>
+    return (
+        <div className="flex h-screen">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-y-auto">
+                <Navbar setAuth={setAuth} />
+                <div className="flex-1 p-4">
+                    <Routes>
+                        <Route path="/" element={<Landing />} />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/favorite" element={<Favorite />} />
+                        <Route path="/music" element={<MusicPlayer />} />
+                    </Routes>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default App;

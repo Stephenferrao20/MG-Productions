@@ -1,46 +1,52 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DropdownMenu from './DropdownMenu';
 import LoginButton from './LoginButton';
-import { getAuth } from 'firebase/auth'; // Import Firebase auth
+import { getAuth } from 'firebase/auth';
 import { app } from '../config/firebase.config';
+import { useStateValue } from '../context/StateProvider';
 
-const Navbar = ({setAuth}) => {
+const Navbar = ({ setAuth }) => {
+  const [{ user }, dispatch] = useStateValue();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const dropdownRef = useRef(null); // Create a ref for the dropdown menu
-  const firebaseAuth = getAuth(app); // Initialize Firebase auth
+  const dropdownRef = useRef(null);
+  const firebaseAuth = getAuth(app);
 
   // Toggle the dropdown menu
-  const toggleDropdown = () => {
-    setDropdownOpen(!isDropdownOpen);
-  };
+  const toggleDropdown = () => setDropdownOpen(!isDropdownOpen);
 
   // Close the dropdown if the user clicks outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false); // Close the dropdown
+        setDropdownOpen(false);
       }
     };
 
-    // Add event listener
     document.addEventListener('mousedown', handleClickOutside);
 
-    // Check if the user is authenticated on initial render
-    const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
-      if (user) {
-        setIsAuthenticated(true); // Set authenticated state to true
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Authentication listener
+  useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        setAuth(true);
+        dispatch({
+          type: 'SET_USER',
+          user: authUser,
+        });
       } else {
-        setIsAuthenticated(false); // Set authenticated state to false
+        setAuth(false);
+        dispatch({
+          type: 'SET_USER',
+          user: null,
+        });
       }
     });
 
-    // Cleanup the event listener and unsubscribe from auth state change
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      unsubscribe();
-    };
-  }, [firebaseAuth]);
+    return unsubscribe;
+  }, [firebaseAuth, dispatch, setAuth]);
 
   return (
     <header className="sticky top-0 z-10 bg-white shadow-md">
@@ -59,20 +65,20 @@ const Navbar = ({setAuth}) => {
           <span className="ml-3 text-xl">Tailblocks</span>
         </a>
 
-        {isAuthenticated ? (
+        {user ? (
           <div ref={dropdownRef} className="relative">
-            <button onClick={toggleDropdown} className="mt-2 rounded-full bg-gray-100 relative">
+            <button onClick={toggleDropdown} className="mt-2 rounded-full bg-gray-100">
               <img
                 className="h-10 w-10 rounded-full"
-                src={''} // Replace with the user profile image URL
-                alt="User"
+                src={user.imageURL || 'default-profile-pic-url'}
+                alt={user.name || 'User'}
               />
             </button>
 
             {isDropdownOpen && <DropdownMenu />}
           </div>
         ) : (
-          <LoginButton setAuth={setAuth}/>
+          <LoginButton setAuth={setAuth} />
         )}
       </div>
     </header>
