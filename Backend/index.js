@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose')
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 require('dotenv').config();
-app.use(bodyParser.json());
 app.use(cors({origin:true}));
+app.use(express.json());
+
 const PORT = process.env.PORT || 4000;
 
 app.get('/',(req,res)=>{
@@ -16,6 +16,19 @@ app.get('/',(req,res)=>{
 //user authentication route
 const userRoute = require('./Routes/AuthRoutes');
 app.use("/api/users/",userRoute);
+
+//Album routes
+const albumRoute = require('./Routes/albums');
+app.use("/api/albums/",albumRoute);
+
+// //Artist routes
+const artistRoute = require('./Routes/artist');
+app.use("/api/artists/",artistRoute);
+
+// //Song routes
+const songRoute = require('./Routes/songs');
+app.use("/api/songs/",songRoute);
+
 
 
 

@@ -12,7 +12,7 @@ const userSchema = new Schema({
     },
     imageURL:{
         type:String,
-        required:true,
+        required:false,
     },
     user_id:{
         type:String,

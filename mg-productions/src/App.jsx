@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -18,32 +17,33 @@ import { actionType } from './context/actionType';
 const App = () => {
     const firebaseAuth = getAuth(app);
     const navigate = useNavigate();
-    const [auth, setAuth] = useState(false || window.localStorage.getItem('auth') === 'true');
+    const [auth, setAuth] = useState(
+        () => window.localStorage.getItem('auth') === 'true' || false
+    );
     const [{ user }, dispatch] = useStateValue();
 
     useEffect(() => {
-        firebaseAuth.onAuthStateChanged((userCred) => {
+        const unsubscribe = firebaseAuth.onAuthStateChanged((userCred) => {
             if (userCred) {
                 userCred.getIdToken().then((token) => {
                     validateUser(token).then((data) => {
-                        console.log(token);
-                        
                         dispatch({
                             type: actionType.SET_USER,
                             user: data,
                         });
+                        setAuth(true);
+                        window.localStorage.setItem('auth', 'true');
                     });
                 });
             } else {
                 setAuth(false);
                 window.localStorage.setItem('auth', 'false');
-                dispatch({
-                  type: actionType.SET_USER,
-                  user : null,
-                });
+                dispatch({ type: actionType.SET_USER, user: null });
                 navigate('/login');
             }
         });
+
+        return () => unsubscribe();
     }, [firebaseAuth, navigate, dispatch]);
 
     return (
@@ -56,7 +56,7 @@ const App = () => {
                         <Route path="/" element={<Landing />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/profile" element={<Profile />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/dashboard/*" element={<Dashboard />} />
                         <Route path="/favorite" element={<Favorite />} />
                         <Route path="/music" element={<MusicPlayer />} />
                     </Routes>

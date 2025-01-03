@@ -1,3 +1,7 @@
 export const actionType = {
     SET_USER: "SET_USER",
+    SET_ALL_USERS: "SET_ALL_USERS",
+    SET_ALL_ARTISTS: "SET_ALL_ARTISTS",
+    SET_ALL_SONGS: "SET_ALL_SONGS",
+    SET_ALL_ALBUMS: "SET_ALL_ALBUMS",
 };

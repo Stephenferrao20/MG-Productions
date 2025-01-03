@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React , { useState, useEffect, useRef } from 'react';
 import DropdownMenu from './DropdownMenu';
 import LoginButton from './LoginButton';
 import { getAuth } from 'firebase/auth';
@@ -62,16 +62,15 @@ const Navbar = ({ setAuth }) => {
           >
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
           </svg>
-          <span className="ml-3 text-xl">Tailblocks</span>
+          <span className="ml-3 text-xl">M G Productions</span>
         </a>
-
         {user ? (
           <div ref={dropdownRef} className="relative">
             <button onClick={toggleDropdown} className="mt-2 rounded-full bg-gray-100">
               <img
                 className="h-10 w-10 rounded-full"
-                src={user.imageURL || 'default-profile-pic-url'}
-                alt={user.name || 'User'}
+                src={user?.user?.imageURL}
+                alt={user?.user?.name}
               />
             </button>
 
