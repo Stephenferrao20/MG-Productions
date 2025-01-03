@@ -32,24 +32,7 @@ function Song() {
     }, []);
 
 
-  const handleUploadSong = async () => {
-    if (!songData.title || !songData.audioURL) {
-      alert('Please fill all fields.');
-      return;
-    }
-    setIsLoading(true);
-    try {
-      await axios.post('/api/songs/upload', songData);
-      alert('Song uploaded successfully');
-      setSongData({ title: '', audioURL: '' });
-      fetchSongs();
-    } catch (error) {
-      console.error('Error uploading song:', error);
-      alert('Failed to upload song');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+ 
 
 
   const renderTabContent = () => {

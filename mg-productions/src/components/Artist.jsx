@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useStateValue } from '../context/StateProvider';
 import { getAllArtists } from '../api';
+import { deleteArtist } from '../api';
 
 function Artist() {
     const [selectedTab, setSelectedTab] = useState('View Artists');
@@ -72,17 +73,12 @@ function Artist() {
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this artist?')) return;
-
-        setIsLoading(true);
-        try {
-            await axios.delete(`/api/artist/delete/${id}`);
+        const res = await deleteArtist(id);
+        if (res) {
             alert('Artist deleted successfully');
             fetchArtists();
-        } catch (error) {
-            console.error('Error deleting artist:', error);
-            alert('Failed to delete artist');
-        } finally {
-            setIsLoading(false);
+        } else {
+            alert('Error deleting artist');
         }
     };
 
@@ -94,9 +90,9 @@ function Artist() {
                         <h2 className="text-xl font-bold mb-4">All Artists</h2>
                         {isLoading ? (
                             <p>Loading...</p>
-                        ) : artists.length > 0 ? (
+                        ) : allArtists?.artist.length > 0 ? (
                             <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                                {artists.map((artist) => (
+                                {allArtists?.artist.map((artist) => (
                                     <li key={artist._id} className="p-4 border rounded shadow">
                                         <p className="font-medium"><strong>Name:</strong> {artist.name}</p>
                                         <p><strong>Instagram:</strong> <a href={artist.instagram} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{artist.instagram}</a></p>

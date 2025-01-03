@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useStateValue } from '../context/StateProvider';
+import { getAllAlbums } from '../api';
 
 function Album() {
     const [selectedTab, setSelectedTab] = useState('View Albums');
-    const [albums, setAlbums] = useState([]);
     const [albumData, setAlbumData] = useState({ name: '', imageURL: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const [{allAlbums} , dispatch] = useStateValue();
 
     const tabRoutes = {
         'View Albums': 'view',
@@ -13,21 +15,16 @@ function Album() {
     };
 
     useEffect(() => {
-        if (selectedTab === 'View Albums') {
-            fetchAlbums();
-        }
-    }, [selectedTab]);
+        fetchAlbums();
+
+    }, []);
 
     const fetchAlbums = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get('/api/albums/getAll');
-            setAlbums(response.data.album || []);
-        } catch (error) {
-            console.error('Error fetching albums:', error);
-        } finally {
-            setIsLoading(false);
-        }
+       const data = await getAllAlbums();
+         dispatch({
+              type: 'SET_ALL_ALBUMS',
+              allAlbums: data,
+         });
     };
 
     const handleSaveAlbum = async () => {
@@ -68,9 +65,9 @@ function Album() {
                         <h2 className="text-xl font-bold mb-4">All Albums</h2>
                         {isLoading ? (
                             <p>Loading...</p>
-                        ) : albums.length > 0 ? (
+                        ) : allAlbums?.album.length > 0 ? (
                             <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                                {albums.map((album) => (
+                                {allAlbums?.album.map((album) => (
                                     <li key={album._id} className="p-4 border rounded shadow">
                                         <p className="font-medium"><strong>Name:</strong> {album.name}</p>
                                         <img

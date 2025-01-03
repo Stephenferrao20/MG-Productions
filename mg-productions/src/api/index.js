@@ -55,3 +55,23 @@ export const getAllArtists = async () => {
         return null;
     }
 }
+
+export const deleteArtist = async (id) => {
+    try {
+      await axios.delete(`${baseURL}api/artists/delete/${id}`); // Correct endpoint
+      return true;
+    } catch (error) {
+      console.error('Error deleting artist:', error);
+      return false;
+    }
+  }
+
+  export const getAllAlbums = async () => {
+    try {
+        const res = await axios.get(`${baseURL}api/albums/getAll`);  // Update endpoint
+        return res.data;
+    } catch (error) {
+        console.error('Error fetching albums:', error);
+        return null;
+    }
+}
