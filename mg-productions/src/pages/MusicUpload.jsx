@@ -1,90 +1,166 @@
-import React from 'react';
-import { getStorage ,ref , getDownloadURL , uploadBytesResumable , deleteObject } from 'firebase/storage';
+import React, { useEffect, useState } from 'react';
 import { useStateValue } from '../context/StateProvider';
-import { getAllArtists,
-      getAllSongs,
- } from '../api';
- import {actionType} from '../context/actionType';
- import { storage } from '../config/firebase.config';
-
+import { getAllArtists, getAllAlbums , saveMusicData , getAllSongs } from '../api';
+import { actionType } from '../context/actionType';
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { getDownloadURL  } from 'firebase/storage';
 
 function MusicUpload() {
+  const [{ allAlbums, allArtists }, dispatch] = useStateValue();
+  const [musicFile, setMusicFile] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(() => {
+    fetchAlbums();
+    fetchArtists();
+  }, []);
+
+  const fetchAlbums = async () => {
+    const data = await getAllAlbums();
+    dispatch({
+      type: actionType.SET_ALL_ALBUMS,
+      allAlbums: data || [],
+    });
+  };
+
+  const fetchArtists = async () => {
+    const data = await getAllArtists();
+    dispatch({
+      type: actionType.SET_ALL_ARTISTS,
+      allArtists: data || [],
+    });
+  };
+
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const storage = getStorage();
+    const fileRef = ref(storage, `${type === 'music' ? 'Audio' : 'Images'}/${Date.now()}-${file.name}`);
+    const uploadTask = uploadBytesResumable(fileRef, file);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setUploadProgress(progress);
+        console.log(`Upload is ${progress}% done`);
+      },
+      (error) => {
+        console.error(`Error uploading ${type} file:`, error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          if (type === 'music') {
+            setMusicFile(downloadURL);
+          } else if (type === 'cover') {
+            setCoverImage(downloadURL);
+          }
+        });
+      }
+    );
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!musicFile || !coverImage) {
+      alert('Please upload both a music file and a cover image.');
+      return;
+    }
+
+    const musicData = {
+      title: e.target.elements.title.value,
+      imageURL : coverImage,
+      songURL : musicFile,
+      album: e.target.elements.album.value,
+      artist: e.target.elements.artist.value,
+    };
+
+    saveMusicData(musicData).then((data) => {
+      if (data?.success) {
+        alert('Music uploaded successfully');
+        getAllSongs().then((songs) => {
+          dispatch({
+            type: actionType.SET_ALL_SONGS,
+            allSongs: songs,
+          });
+        });
+      } else {
+        alert('Error uploading music');
+      }
+    });
+   // Add logic to submit this data to your backend or database
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="sm:max-w-lg w-full p-10 bg-white rounded-xl shadow-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">Upload Music</h2>
         </div>
-        <form className="mt-8 space-y-5" action="#" method="POST">
+        {uploadProgress > 0 && (
+          <div className="text-center mb-4">
+            <p>Upload Progress: {uploadProgress}%</p>
+          </div>
+        )}
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div className="grid space-y-2">
             <label className="text-sm font-bold text-gray-500 tracking-wide">Music Title</label>
             <input
               className="text-base p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+              name="title"
               type="text"
               placeholder="Title"
+              required
             />
           </div>
           <div className="grid space-y-2">
-            <label className="text-sm font-bold text-gray-500 tracking-wide">Description</label>
-            <textarea
+            <label className="text-sm font-bold text-gray-500 tracking-wide">Album</label>
+            <select
               className="text-base p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-              type="text"
-              placeholder="Description"
-            />
+              name="album"
+              required
+            >
+              <option value="">Choose the Album</option>
+              {allAlbums?.album?.map((alb) => (
+                <option key={alb.id} value={alb.id}>
+                  {alb.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="grid space-y-2">
             <label className="text-sm font-bold text-gray-500 tracking-wide">Artist</label>
             <select
               className="text-base p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-              placeholder="Artist"
+              name="artist"
+              required
             >
-              <option>Choose the Artist</option>
+              <option value="">Choose the Artist</option>
+              {allArtists?.artist?.map((artist) => (
+                <option key={artist.id} value={artist.id}>
+                  {artist.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="grid space-y-2">
             <label className="text-sm font-bold text-gray-500 tracking-wide">Upload Music</label>
-            <div className="flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center rounded-lg border-4 border-dashed w-full h-60 p-6 group text-center bg-gray-50">
-                <img
-                  className="h-16 mb-4"
-                  src="https://assets.dryicons.com/uploads/icon/svg/11234/af2ae7e4-66c4-4827-8161-c533579bf270.svg"
-                  alt="Upload illustration"
-                />
-                <p className="text-gray-500">
-                  Drag and drop files here <br /> or{' '}
-                  <span className="text-blue-600 hover:underline cursor-pointer">select a file</span>
-                </p>
-                <input type="file" className="hidden" />
-              </label>
-            </div>
+            <input type="file" accept=".mp3" onChange={(e) => handleFileChange(e, 'music')} required />
           </div>
           <p className="text-sm text-gray-400 text-center">File type: mp3</p>
           <div className="grid space-y-2">
             <label className="text-sm font-bold text-gray-500 tracking-wide">Cover Image</label>
-            <div className="flex items-center justify-center w-full">
-              <label className="flex flex-col items-center justify-center rounded-lg border-4 border-dashed w-full h-60 p-6 group text-center bg-gray-50">
-                <img
-                  className="h-16 mb-4"
-                  src="https://img.freepik.com/free-vector/image-upload-concept-landing-page_52683-27130.jpg?size=338&ext=jpg"
-                  alt="Upload illustration"
-                />
-                <p className="text-gray-500">
-                  Drag and drop files here <br /> or{' '}
-                  <span className="text-blue-600 hover:underline cursor-pointer">select a file</span>
-                </p>
-                <input type="file" className="hidden" />
-              </label>
-            </div>
+            <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'cover')} required />
           </div>
           <p className="text-sm text-gray-400 text-center">File type: image files</p>
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center bg-blue-500 text-white py-3 rounded-full font-semibold tracking-wide focus:outline-none focus:shadow-outline hover:bg-blue-600 transition ease-in-out duration-300"
-            >
-              Upload
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full flex justify-center bg-blue-500 text-white py-3 rounded-full font-semibold tracking-wide focus:outline-none focus:shadow-outline hover:bg-blue-600 transition ease-in-out duration-300"
+          >
+            Upload
+          </button>
         </form>
       </div>
     </div>

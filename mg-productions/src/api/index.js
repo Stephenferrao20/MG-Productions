@@ -75,3 +75,25 @@ export const deleteArtist = async (id) => {
         return null;
     }
 }
+
+export const saveMusicData = async (data) => {
+    try {
+        const res = await axios.post(`${baseURL}api/songs/save`, {...data});  
+        return res.data;
+    } catch (error) {
+        console.error('Error saving music data:', error);
+        return null;
+    }
+} 
+
+
+export const deleteSong = async (id) => {
+    try {
+      const res = await axios.delete(`${baseURL}api/songs/delete/${id}`);
+      return res;  
+    } catch (error) {
+      console.error('Error deleting song:', error);
+      return false;
+    }
+  };
+  
