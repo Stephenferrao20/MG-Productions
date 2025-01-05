@@ -60,7 +60,7 @@ function Song() {
             {isLoading ? (
               <p>Loading...</p>
             ) : allSongs?.song.length > 0 ? (
-              <MusicCard songs={allSongs?.song}/>
+              <MusicCard songs={allSongs?.song} refreshSongs={fetchSongs} songFilter={songFilter}/>
             ) : (
               <p>No songs found</p>
             )}

@@ -2,13 +2,12 @@ import React from 'react';
 import { FaCirclePlay } from "react-icons/fa6";
 import { MdDeleteForever } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
-import { deleteSong , getAllSongs } from '../api';
+import { deleteSong , getAllSongs , } from '../api';
 import { useStateValue } from '../context/StateProvider';
 
-function Card({ data }) {
+function Card({ data , refreshSongs , index , type }) {
   const location = useLocation(); // Get the current path
-  const [{ allSongs }, dispatch] = useStateValue();
-
+  const [{songIndex , isSongPlaying}, dispath] = useStateValue(); 
   const handleDelete = async (id) => {
     try {
       const res = await deleteSong(id); // Call the API function
@@ -25,19 +24,25 @@ function Card({ data }) {
     }
   };
   
+  const addToContext = () => {
+    if(!isSongPlaying){
+      dispath({
+        type: 'SET_ISSONG_PLAYING',
+        isSongPlaying: true 
+      })
+    }
 
-  const refreshSongs = async () => {
-    const data = await getAllSongs();
-    dispatch({
-      type: actionType.SET_ALL_SONGS,
-      allSongs: data || [],
-    });
+    if(songIndex !== index){
+      dispath({
+        type: 'SET_SONG_INDEX',
+        songIndex: index
+      })
+    }
   }
 
   return (
-    <div className="p-4 lg:w-1/3">
+    <div className="p-4 lg:w-1/3" onClick={type === 'song' && addToContext}>
       <div className="h-full bg-gray-100 bg-opacity-75 px-5 pt-5 pb-24 rounded-lg overflow-hidden text-center relative flex flex-col group">
-        {console.log(data)}
         <img
           src={data.imageURL}
           alt="Song Cover"

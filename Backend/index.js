@@ -29,8 +29,9 @@ app.use("/api/artists/",artistRoute);
 const songRoute = require('./Routes/songs');
 app.use("/api/songs/",songRoute);
 
-
-
+// //Chat routes
+const chatRoute = require('./Routes/chat');
+app.use("/api/chats/",chatRoute);
 
 mongoose.connect(process.env.DB_NAME),{useNewUrlParser : true};
 mongoose.connection

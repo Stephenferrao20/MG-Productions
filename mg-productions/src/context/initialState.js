@@ -10,5 +10,7 @@ export const initialState  = {
     allUsers: null,
     allArtists: null,
     allSongs: null,
-    allAlbums: null
+    allAlbums: null,
+    isSongPlaying: false,
+    songIndex : 0,
 };

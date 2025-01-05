@@ -30,6 +30,16 @@ const reducer = (state, action) => {
                 ...state,
                 allAlbums: action.allAlbums,
             };
+        case actionType.SET_ISSONG_PLAYING:
+            return {
+                ...state,
+                isSongPlaying: action.isSongPlaying,
+            };
+        case actionType.SET_SONG_INDEX:
+            return {
+                ...state,
+                songIndex: action.songIndex,
+            };
         default:
             return state;
     }
