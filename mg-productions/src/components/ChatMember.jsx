@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-function ChatMember({ user, handleFunction, loadChats , selectedChat}) {
+function ChatMember({ user, handleFunction, loadChats }) {
   const handleClick = () => {
     handleFunction();
     loadChats();

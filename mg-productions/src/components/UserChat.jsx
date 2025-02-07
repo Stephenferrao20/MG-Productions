@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdSend, MdVideoCall, MdCall } from 'react-icons/md';
 import { FaRegSmile } from 'react-icons/fa';
 

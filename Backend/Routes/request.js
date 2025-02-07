@@ -9,7 +9,10 @@ router.post("/",async(req,res)=>{
             name: req.body.name,
             users: req.body.users,
             musicURL: req.body.musicURL,
-            price: req.body.price
+            price: req.body.price,
+            orderId: req.body.orderId,
+            orderAmount: req.body.orderAmount,
+            currency: req.body.currency
         };
         const savedRequest = await request.create(newRequest);
         res.status(201).json(savedRequest);

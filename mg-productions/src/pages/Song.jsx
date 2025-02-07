@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import axios, { getAdapter } from 'axios';
+import { useState, useEffect } from 'react';
 import MusicUpload from './MusicUpload';
 import { useStateValue } from '../context/StateProvider';
 import { getAllSongs } from '../api';
@@ -7,7 +6,6 @@ import MusicCard from '../components/MusicCard';
 
 function Song() {
   const [selectedTab, setSelectedTab] = useState('View Songs');
-  const [songData, setSongData] = useState({ title: '', audioURL: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [songFilter, setSongFilter] = useState("");
   const [{ allSongs }, dispatch] = useStateValue();

@@ -120,7 +120,7 @@ export const deleteSong = async (id) => {
 
   export const sendMessage = async (content, chatId, token) => {
     try {
-        const response = await axios.post('http://localhost:4000/api/messages/', // Your API endpoint
+        const response = await axios.post(`${baseURL}api/messages/`, // Your API endpoint
             { content, chatId }, 
             {
                 headers: {

@@ -1,4 +1,5 @@
-import React , { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import DropdownMenu from './DropdownMenu';
 import LoginButton from './LoginButton';
 import { getAuth } from 'firebase/auth';
@@ -76,5 +77,9 @@ const Navbar = ({ setAuth }) => {
     </header>
   );
 };
+Navbar.propTypes = {
+  setAuth: PropTypes.func.isRequired,
+};
+
 
 export default Navbar;

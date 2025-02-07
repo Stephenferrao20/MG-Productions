@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 function SignUp({ onClose, onLoginOpen }) {
   return (
@@ -103,5 +103,10 @@ function SignUp({ onClose, onLoginOpen }) {
     </div>
   );
 }
+SignUp.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onLoginOpen: PropTypes.func.isRequired,
+};
+
 
 export default SignUp;

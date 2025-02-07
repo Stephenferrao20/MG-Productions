@@ -4,10 +4,12 @@ import { getAllUsers } from '../api';
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { getDownloadURL  } from 'firebase/storage';
 import { saveRequestData } from '../api';
+import axios from 'axios';
 
 function Request() {
     const [{ allUsers } , dispatch] = useStateValue();
     const [musicFile, setMusicFile] = useState(null);
+    const [musicFileName , setMusicFileName] = useState('MusicFile')
     const [uploadProgress, setUploadProgress] = useState(0);
     
 
@@ -29,6 +31,7 @@ function Request() {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        setMusicFileName(file.name)
         if (!file) return;
         const storage = getStorage();
         const fileRef = ref(storage, `Request/${Date.now()}-${file.name}`);
@@ -52,31 +55,65 @@ function Request() {
         );
       };
 
-      const handleSubmit = (e) => {
-          e.preventDefault();
+      const handleSubmit = async (e) => {
+        e.preventDefault();
       
-          if (!musicFile) {
-            alert('Please upload the music file.');
-            return;
+        // Ensure the music file is uploaded
+        if (!musicFile) {
+          alert('Please upload the music file.');
+          return;
+        }
+      
+        // Retrieve and validate the price from the form (in rupees)
+        const priceValue = Number(e.target.elements.price.value);
+        if (!priceValue || isNaN(priceValue)) {
+          alert('Please enter a valid price.');
+          return;
+        }
+      
+        // Prepare the request data
+        let requestData = {
+          name: e.target.elements.title.value,
+          users: e.target.elements.users.value,
+          musicURL: musicFile,
+          price: priceValue,  
+          isPaid: false,      
+        };
+      
+        try {
+          const orderResponse = await axios.post("http://localhost:4000/api/payment/create-order", {
+            price: priceValue * 100, 
+          });
+          const orderData = orderResponse.data;
+          console.log("Order created:", orderData);
+      
+          // Validate that the orderData contains the necessary fields
+          if (!orderData || !orderData.id || !orderData.amount || !orderData.currency) {
+            throw new Error("Payment order creation failed or returned incomplete data.");
           }
       
-          const requestData = {
-            name: e.target.elements.title.value,
-            users : e.target.elements.users.value,
-            musicURL : musicFile,
-            price:e.target.elements.price.value,
-          };
+          // 2. Attach the payment order details to the request data.
+          requestData.orderId = orderData.id;
+          requestData.orderAmount = orderData.amount; // amount in paise
+          requestData.currency = orderData.currency;
       
-          saveRequestData(requestData).then((data) => {
-            console.log(data);
-            if (data) {
-              alert('Music uploaded successfully');
-            } else {
-              alert('Error uploading music');
-            }
-          });
-         // Add logic to submit this data to your backend or database
-        };
+          // 3. Save the request data (including payment order details) to your database.
+          const savedRequest = await saveRequestData(requestData);
+          if (!savedRequest) {
+            throw new Error("Failed to save music request data.");
+          }
+      
+          // Both operations succeeded.
+          alert('Music request and payment setup completed successfully.');
+        } catch (error) {
+          console.error('Error during combined operation:', error);
+          alert("Operation failed: " + error.message);
+          
+        }
+      };
+      
+      
+
 
   return (
     <div
@@ -127,7 +164,9 @@ function Request() {
             <label className="text-sm font-bold text-gray-500 tracking-wide">Upload Music</label>
             <div className="flex items-center justify-center w-full">
               <label className="flex flex-col rounded-lg border-4 border-dashed w-full h-60 p-10 group text-center">
-                <div className="h-full w-full text-center flex flex-col items-center justify-center">
+                {
+                  uploadProgress != 100 ? (
+                  <div className="h-full w-full text-center flex flex-col items-center justify-center">
                   <div className="flex flex-auto max-h-48 w-2/5 mx-auto -mt-10">
                     <img
                       className="has-mask h-36 object-center p-1"
@@ -143,6 +182,14 @@ function Request() {
                     from your computer
                   </p>
                 </div>
+                ):(
+                  <div className="h-full w-full text-center flex flex-col items-center justify-center">
+                  
+                  <p className="pointer-none text-gray-500">
+                    {musicFileName}
+                  </p>
+                </div>
+                )}
                 <input type="file" className="hidden" onChange={(e) => handleFileChange(e)}/>
               </label>
             </div>

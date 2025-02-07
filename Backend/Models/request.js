@@ -17,6 +17,18 @@ const requestModel = new mongoose.Schema({
     isPaid:{
         type : Boolean,
         required:false,
+    },
+    orderId:{
+        type: String,
+        required:true,
+    },
+    orderAmount:{
+        type: Number,
+        required:true
+    },
+    currency:{
+        type:String,
+        required:true
     }
 });
 

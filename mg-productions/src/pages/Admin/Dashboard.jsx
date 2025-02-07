@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import Chat from '../Chat';
 import Album from '../../components/Albums';
@@ -93,5 +94,8 @@ function Dashboard({user}) {
         </div>
     );
 }
+Dashboard.propTypes = {
+    user: PropTypes.object.isRequired,
+};
 
 export default Dashboard;

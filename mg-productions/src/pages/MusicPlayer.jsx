@@ -48,7 +48,7 @@ function MusicPlayer() {
       isSongPlaying: false
     })
   }
-  const [{songIndex , isSongPlaying , allSongs }, dispath] = useStateValue();
+  const [{songIndex , allSongs }, dispath] = useStateValue();
   const [isPlayList , setIsPlayList] = useState(false);
 
   return (

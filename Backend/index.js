@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose')
 const cors = require('cors');
+const Razorpay = require('razorpay');
 
 require('dotenv').config();
 app.use(cors({origin:true}));
@@ -40,6 +41,12 @@ app.use("/api/messages/", messageRoute);
 // //Request routes
 const requestRoute = require('./Routes/request');
 app.use("/api/request/", requestRoute);
+
+
+// //Payment routes
+const paymentRoute = require('./Routes/payment');
+app.use("/api/payment/",paymentRoute);
+
 
 mongoose.connect(process.env.DB_NAME),{useNewUrlParser : true , useUnifiedTopology : true};
 mongoose.connection
