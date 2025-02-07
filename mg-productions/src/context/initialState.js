@@ -1,4 +1,3 @@
-import { all } from "axios";
 
 export const initialState  = {
     user: {
@@ -13,4 +12,9 @@ export const initialState  = {
     allAlbums: null,
     isSongPlaying: false,
     songIndex : 0,
+    selectedChat: null,
+    allChats : null,
+    allMessages: [], 
+    loadingMessages: false,
+    allRequest: [],
 };

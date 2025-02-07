@@ -1,4 +1,3 @@
-import React from 'react';
 import MusicCard from '../components/MusicCard';
 import { getAllSongs } from '../api';
 import { useStateValue } from '../context/StateProvider';
@@ -21,7 +20,7 @@ export default function Landing() {
       }, []);
   return (
     <div >
-      {console.log(`songs ${allSongs?.song[0].title}`)}
+        {console.log(allSongs)}
         <MusicCard songs={allSongs?.song} refreshSongs={fetchSongs} songFilter={''}/>
     </div>
   )

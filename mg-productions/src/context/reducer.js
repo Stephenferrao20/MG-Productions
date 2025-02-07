@@ -9,12 +9,12 @@ const reducer = (state, action) => {
                 ...state,
                 user: action.user,
             };
-            case actionType.SET_ALL_USERS:
-                console.log('Dispatching SET_ALL_USERS:', action.allUsers);
-                return {
-                    ...state,
-                    allUsers: action.allUsers || [], // Ensure it's set to an empty array if null
-                };                       
+        case actionType.SET_ALL_USERS:
+            console.log('Dispatching SET_ALL_USERS:', action.allUsers);
+            return {
+                ...state,
+                allUsers: action.allUsers || [], // Ensure it's set to an empty array if null
+            };
         case actionType.SET_ALL_ARTISTS:
             return {
                 ...state,
@@ -39,6 +39,26 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 songIndex: action.songIndex,
+            };
+        case actionType.SET_SELECTED_CHAT:
+            return {
+                ...state,
+                selectedChat: action.selectedChat,
+            };
+        case actionType.SET_ALL_CHATS:
+            return {
+                ...state,
+                allChats: action.allChats,
+            };
+        case actionType.SET_MESSAGES:
+            return {
+                ...state,
+                allMessages: action.allMessages || [],
+            };
+        case actionType.SET_REQUEST:
+            return{
+                ...state,
+                allRequest : action.allRequest || [],
             };
         default:
             return state;

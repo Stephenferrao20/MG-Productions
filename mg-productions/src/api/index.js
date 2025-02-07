@@ -11,7 +11,7 @@ export const validateUser = async(token) => {
         })
         return res.data;
     } catch (error) {
-        
+        console.log(`erro catch ${error}`);
     }
 }
 
@@ -48,7 +48,7 @@ export const getAllSongs = async () => {
 
 export const getAllArtists = async () => {
     try {
-        const res = await axios.get(`${baseURL}api/artists/getAll`);  // Update endpoint
+        const res = await axios.get(`${baseURL}api/artists/getAll`);
         return res.data;
     } catch (error) {
         console.error('Error fetching artists:', error);
@@ -97,3 +97,62 @@ export const deleteSong = async (id) => {
     }
   };
   
+  export const fetchChats = async () => {
+    try {
+      const { data } = await axios.get(`${baseURL}api/chats`);
+      return data;
+    } catch (error) {
+      console.error("Error fetching chats:", error.message);
+      return null;
+    }
+  };
+  
+  
+  export const accessChat = async (user_id) => {
+    try {
+      const { data } = await axios.post(`${baseURL}api/chats`, { user_id });
+      return data;
+    } catch (error) {
+      console.error("Error accessing chat:", error.message);
+      return null;
+    }
+  };
+
+  export const sendMessage = async (content, chatId, token) => {
+    try {
+        const response = await axios.post('http://localhost:4000/api/messages/', // Your API endpoint
+            { content, chatId }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                }
+            }
+        );
+        console.log("Message sent successfully:", response.data);
+        return response.data; 
+    } catch (error) {
+        console.error("Error sending message:", error.message);
+        throw error; 
+    }
+};
+
+export const saveRequestData = async(data) =>{
+  try {
+    const res = await axios.post(`${baseURL}api/request/`,{...data});
+    return res.data;
+  } catch (error) {
+    console.error('Error saving music data:', error);
+       return null;
+  }
+};
+
+export const fetchRequest = async (id) => {
+  try {
+    const res = await axios.get(`${baseURL}api/request/${id}`);
+    console.log('fetched request ' + res);
+    return res;  
+  } catch (error) {
+    console.error('Error fetching request :', error);
+    return false;
+  }
+};

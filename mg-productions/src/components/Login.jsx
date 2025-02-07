@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {useNavigate } from 'react-router-dom';
 import { app } from '../config/firebase.config';
 import {getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
@@ -6,55 +7,43 @@ import { useStateValue } from '../context/StateProvider';
 import { validateUser } from '../api';
 import { actionType } from '../context/actionType';
 
-function Login({ onClose, onSignUpOpen , setAuth}) {
+function Login({ onClose, onSignUpOpen, setAuth }) {
 
-    const firebaseAuth = getAuth(app);
-    const provider = new GoogleAuthProvider(); 
+  const firebaseAuth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const navigate = useNavigate();
+  const [{ Token }, dispatch] = useStateValue();
 
-    const navigate = useNavigate();
+  const loginWithGoogle = async () => {
+    try {
+      const userCred = await signInWithPopup(firebaseAuth, provider);
+      if (userCred) {
+        const token = await userCred.user.getIdToken();
+        console.log("Token login :", token);
+        window.localStorage.setItem("authToken",token);
+        const userData = await validateUser(token);
+        console.log("User Data:", userData);
 
-    const [{user},dispatch] = useStateValue();
-
-    const loginWithGoogle = async () =>{
-      await signInWithPopup(firebaseAuth,provider).then((userCred) =>{
-        if(userCred){
-          setAuth(true);
-          window.localStorage.setItem("auth","true")
-        }
-
-        firebaseAuth.onAuthStateChanged((userCred) => {
-          if(userCred){
-            userCred.getIdToken().then((token) =>{
-               validateUser(token)
-               .then((data) => {
-                dispatch({
-                  type : actionType.SET_USER,
-                  user : data,
-                })
-               })
-            }
-            )
-            navigate("/",{replace:true})
-            
-          }
-          else{
-            setAuth(false);
-            dispatch({
-              type : actionType.SET_USER,
-              user : null,
-            })
-            navigate("/login")
-          }
+        dispatch({
+          type: actionType.SET_USER,
+          user: userData,
         });
-        
-      })
-      
-    }
-    useEffect(() =>{
-      if(window.localStorage.getItem("auth" === "true")){
-        navigate("/",{replace:true})
+
+        setAuth(true);
+        window.localStorage.setItem("auth", "true");
+        navigate("/", { replace: true });
       }
-    },[])
+    } catch (error) {
+      console.error("Google Login Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (window.localStorage.getItem("auth") === "true") {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
+
 
   return (
     <div
@@ -62,6 +51,7 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
       tabIndex="-1"
       className="bg-black/50 overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 h-full items-center justify-center flex"
     >
+      {console.log(`token gene ${Token}`)}
       <div className="relative p-4 w-full max-w-md h-full md:h-auto">
         <div className="relative bg-white rounded-lg shadow">
           <button
@@ -143,7 +133,7 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
             </form>
 
             <div className="mt-6 text-center text-sm text-slate-600">
-              Don't have an account?
+              Don&apos;t have an account?
               <button onClick={onSignUpOpen} className="font-medium text-[#4285f4]">Sign up</button>
             </div>
           </div>
@@ -152,5 +142,11 @@ function Login({ onClose, onSignUpOpen , setAuth}) {
     </div>
   );
 }
+
+Login.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onSignUpOpen: PropTypes.func.isRequired,
+  setAuth: PropTypes.func.isRequired,
+};
 
 export default Login;

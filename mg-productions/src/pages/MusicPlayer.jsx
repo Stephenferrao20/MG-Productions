@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useStateValue } from '../context/StateProvider';
 import { RiPlayListFill } from 'react-icons/ri';
 import { motion } from 'framer-motion';

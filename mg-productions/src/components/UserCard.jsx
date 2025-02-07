@@ -1,12 +1,12 @@
-import React from 'react';
-import { deleteUser as deleteUserApi } from '../api'; // Avoid naming conflict
+import { deleteUser as deleteUserApi } from '../api'; 
+import PropTypes from 'prop-types';
 
-function UserCard({ user, refreshUsers }) { // Accept refreshUsers as a prop
+function UserCard({ user, refreshUsers }) { 
   const handleDelete = async (id) => {
-    const res = await deleteUserApi(id); // Call the API function
+    const res = await deleteUserApi(id); 
     if (res) {
       console.log('User deleted successfully');
-      refreshUsers(); // Refresh the user list
+      refreshUsers(); 
     } else {
       console.error('Error deleting user');
     }
@@ -34,5 +34,14 @@ function UserCard({ user, refreshUsers }) { // Accept refreshUsers as a prop
     </div>
   );
 }
+UserCard.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    _id: PropTypes.string.isRequired,
+  }).isRequired,
+  refreshUsers: PropTypes.func.isRequired,
+};
 
 export default UserCard;

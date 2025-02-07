@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import Chat from '../Chat';
-import UploadRequest from '../UploadRequest';
 import Album from '../../components/Albums';
 import Artist from '../../components/Artist';
 import Users from '../../components/Users';
 import Song from '../Song';
+import Request from '../../components/Request';
 
-function Dashboard() {
+function Dashboard({user}) {
     const navigate = useNavigate();
     const location = useLocation();
-    const [selectedTab, setSelectedTab] = useState('Upload Music');
+    const [selectedTab, setSelectedTab] = useState('Users');
 
     const tabRoutes = {
-        Users : 'users',
+        Users: 'users',
         Songs: 'songs',
-        Album:'albums',
-        Artist : 'artists',
+        Albums: 'albums', 
+        Artists: 'artists', // Fixed key capitalization
         Messages: 'messages',
-        'Upload Request': 'uploadrequest',
+        'Upload Request': 'request', 
     };
 
     useEffect(() => {
@@ -28,8 +28,12 @@ function Dashboard() {
         );
         if (matchingTab) {
             setSelectedTab(matchingTab);
+        } else {
+            setSelectedTab('Users');
+            handleTabChange(selectedTab);
         }
     }, [location.pathname]);
+    
 
     const handleTabChange = (tab) => {
         setSelectedTab(tab);
@@ -40,6 +44,7 @@ function Dashboard() {
         <div>
             {/* Dropdown for small screens */}
             <div className="sm:hidden">
+                {console.log(user)}
                 <label htmlFor="Tab" className="sr-only">Select Tab</label>
                 <select
                     id="Tab"
@@ -81,9 +86,8 @@ function Dashboard() {
                     <Route path="songs" element={<Song/> } />
                     <Route path="albums" element={<Album/> } />
                     <Route path="artists" element={<Artist/> } />
-                    <Route path="messages" element={<Chat />} />
-                    <Route path="uploadrequest" element={<UploadRequest />} />
-                    <Route path="notifications" element={<div>Notifications Content</div>} />
+                    <Route path="messages" element={<Chat user={user}/>} />
+                    <Route path="request" element={<Request />} />
                 </Routes>
             </div>
         </div>

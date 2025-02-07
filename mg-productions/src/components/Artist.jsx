@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useStateValue } from '../context/StateProvider';
-import { getAllArtists } from '../api';
-import { deleteArtist } from '../api';
+import { getAllArtists, deleteArtist } from '../api';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 function Artist() {
     const [selectedTab, setSelectedTab] = useState('View Artists');
-    const [artists, setArtists] = useState([]);
     const [artistData, setArtistData] = useState({ name: '', imageURL: '', instagram: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [editId, setEditId] = useState(null);
-    const [{allArtists}, dispatch] = useStateValue();
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [{ allArtists }, dispatch] = useStateValue();
 
     const tabRoutes = {
         'View Artists': 'view',
@@ -18,20 +18,17 @@ function Artist() {
     };
 
     const fetchArtists = async () => {
-        const data = await getAllArtists();
-        dispatch({
-            type: 'SET_ALL_ARTISTS',
-            allArtists: data,
-        });
+        try {
+            const data = await getAllArtists();
+            dispatch({ type: 'SET_ALL_ARTISTS', allArtists: data });
+        } catch (error) {
+            console.error('Error fetching artists:', error);
+        }
     };
 
     useEffect(() => {
-        if (!allArtists) {
-            fetchArtists();
-        }
-    }, []);
-
-   
+        if (!allArtists) fetchArtists();
+    }, [allArtists]);
 
     const handleAddOrUpdateArtist = async () => {
         if (!artistData.name || !artistData.imageURL || !artistData.instagram) {
@@ -43,12 +40,12 @@ function Artist() {
         try {
             if (editId) {
                 // Update existing artist
-                await axios.put(`/api/artist/update/${editId}`, artistData);
+                await axios.put(`/api/artists/update/${editId}`, artistData);
                 alert('Artist updated successfully');
                 setEditId(null);
             } else {
                 // Add new artist
-                await axios.post('/api/artist/save', artistData);
+                await axios.post('/api/artists/save', artistData);
                 alert('Artist added successfully');
             }
             setArtistData({ name: '', imageURL: '', instagram: '' });
@@ -73,13 +70,42 @@ function Artist() {
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this artist?')) return;
-        const res = await deleteArtist(id);
-        if (res) {
+        try {
+            await deleteArtist(id);
             alert('Artist deleted successfully');
             fetchArtists();
-        } else {
-            alert('Error deleting artist');
+        } catch (error) {
+            console.error('Error deleting artist:', error);
+            alert('Failed to delete artist');
         }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const storage = getStorage();
+        const fileRef = ref(storage, `Artist/${Date.now()}-${file.name}`);
+        const uploadTask = uploadBytesResumable(fileRef, file);
+
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                const progress = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+                setUploadProgress(progress);
+                console.log(`Upload is ${progress}% done`);
+            },
+            (error) => {
+                console.error('Error uploading file:', error);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setArtistData((prev) => ({ ...prev, imageURL: downloadURL }));
+                });
+            }
+        );
     };
 
     const renderTabContent = () => {
@@ -90,12 +116,22 @@ function Artist() {
                         <h2 className="text-xl font-bold mb-4">All Artists</h2>
                         {isLoading ? (
                             <p>Loading...</p>
-                        ) : allArtists?.artist.length > 0 ? (
+                        ) : allArtists?.artist?.length > 0 ? (
                             <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                                {allArtists?.artist.map((artist) => (
+                                {allArtists.artist.map((artist) => (
                                     <li key={artist._id} className="p-4 border rounded shadow">
                                         <p className="font-medium"><strong>Name:</strong> {artist.name}</p>
-                                        <p><strong>Instagram:</strong> <a href={artist.instagram} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{artist.instagram}</a></p>
+                                        <p>
+                                            <strong>Instagram:</strong> 
+                                            <a 
+                                                href={artist.instagram} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="text-blue-500 underline"
+                                            >
+                                                {artist.name}
+                                            </a>
+                                        </p>
                                         <img
                                             src={artist.imageURL}
                                             alt={artist.name}
@@ -136,11 +172,12 @@ function Artist() {
                         />
                         <input
                             type="file"
-                            placeholder="Image URL"
-                            value={artistData.imageURL}
-                            onChange={(e) => setArtistData({ ...artistData, imageURL: e.target.value })}
+                            onChange={handleFileChange}
                             className="mb-4 w-full p-2 border rounded"
                         />
+                        {uploadProgress > 0 && (
+                            <p>Upload Progress: {uploadProgress}%</p>
+                        )}
                         <input
                             type="text"
                             placeholder="Instagram Link"
@@ -165,7 +202,6 @@ function Artist() {
     return (
         <div className="max-w-4xl mx-auto p-4">
             {/* Tab Navigation */}
-            {console.log(allArtists)};
             
             <div className="sm:hidden mb-4">
                 <label htmlFor="Tab" className="sr-only">Select Tab</label>

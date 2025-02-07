@@ -9,6 +9,7 @@ lerna-debug.log*
 
 /mg-productions/node_modules
 /Backend/node_modules
+/Backend/config/serviceAccountKey.json
 Backend/.env
 mg-productions/src/.env
 dist

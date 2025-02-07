@@ -1,6 +1,6 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import Card from './Card';
-import { useStateValue } from '../context/StateProvider';
+
 
 export default function MusicCard({ songs , refreshSongs , songFilter }) {
   
@@ -23,3 +23,9 @@ export default function MusicCard({ songs , refreshSongs , songFilter }) {
     </section>
   );
 }
+
+MusicCard.propTypes = {
+  songs: PropTypes.array.isRequired,
+  refreshSongs: PropTypes.func.isRequired,
+  songFilter: PropTypes.string.isRequired,
+}; 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStateValue } from '../context/StateProvider';
 import { getAllArtists, getAllAlbums , saveMusicData , getAllSongs } from '../api';
 import { actionType } from '../context/actionType';

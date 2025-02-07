@@ -1,9 +1,10 @@
-import React from 'react';
-import { FaCirclePlay } from "react-icons/fa6";
+
+
 import { MdDeleteForever } from "react-icons/md";
 import { useLocation } from 'react-router-dom';
-import { deleteSong , getAllSongs , } from '../api';
+import { deleteSong } from '../api';
 import { useStateValue } from '../context/StateProvider';
+import PropTypes from 'prop-types';
 
 function Card({ data , refreshSongs , index , type }) {
   const location = useLocation(); // Get the current path
@@ -48,11 +49,9 @@ function Card({ data , refreshSongs , index , type }) {
           alt="Song Cover"
           className="m-1 max-w-full justify-center items-center rounded-lg"
         />
-        <div className="m-0 p-0 absolute bottom-2/4 right-10 border h-9 opacity-0 group-hover:opacity-100 transition-opacity">
-          <FaCirclePlay className="m-0 p-0 h-10 text-5xl" />
-        </div>
-        <p className="leading-relaxed m-2 text-3xl">{data.title}</p>
-        <p className="inline-flex items-center ml-6 text-xl">{data.artist}</p>
+        
+        <p className="leading-relaxed m-2 text-2xl">{data.title}</p>
+        <p className="inline-flex items-center ml-6 text-xl text-blue-500">{data.artist}</p>
         <div className="text-center mt-1 leading-none flex justify-center absolute bottom-0 left-0 w-full py-4">
           <span className="text-gray-400 mr-3 inline-flex items-center leading-none text-sm pr-3 py-0 border-r-2 border-gray-200">
             <svg
@@ -91,5 +90,12 @@ function Card({ data , refreshSongs , index , type }) {
     </div>
   );
 }
+Card.propTypes = {
+  data: PropTypes.object.isRequired,
+  refreshSongs: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+};
 
 export default Card;
+
