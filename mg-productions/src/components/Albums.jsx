@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useStateValue } from '../context/StateProvider';
 import { getAllAlbums } from '../api';
@@ -68,13 +68,13 @@ function Album() {
                         ) : allAlbums?.album.length > 0 ? (
                             <ul className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                 {allAlbums?.album.map((album) => (
-                                    <li key={album._id} className="p-4 border rounded shadow">
-                                        <p className="font-medium"><strong>Name:</strong> {album.name}</p>
+                                    <li key={album._id} className="p-4 border rounded shadow" onClick={''}>
                                         <img
                                             src={album.imageURL}
                                             alt={album.name}
                                             className="w-full h-40 object-cover mt-2 rounded"
                                         />
+                                        <p className="font-medium items-center justify-center text-lg p-0 m-2"><strong>Name:</strong> {album.name}</p>
                                     </li>
                                 ))}
                             </ul>

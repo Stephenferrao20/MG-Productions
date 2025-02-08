@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Login from './Login';
 import SignUp from './SignUp';
 
@@ -8,7 +8,7 @@ const LoginButton = ({setAuth}) => {
 
   const openLogin = () => {
     setIsLoginOpen(true);
-    setIsSignUpOpen(false); // Ensure SignUp is closed
+    setIsSignUpOpen(false); 
   };
 
   const closeLogin = () => {
@@ -17,7 +17,7 @@ const LoginButton = ({setAuth}) => {
 
   const openSignUp = () => {
     setIsSignUpOpen(true);
-    setIsLoginOpen(false); // Ensure Login is closed
+    setIsLoginOpen(false); 
   };
 
   const closeSignUp = () => {

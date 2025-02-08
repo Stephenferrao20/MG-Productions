@@ -1,4 +1,3 @@
-import React from 'react';
 import { useStateValue } from '../../context/StateProvider';
 
 function Profile() {
@@ -18,20 +17,15 @@ function Profile() {
         />
         <div>
           <h3 className="text-lg font-medium text-gray-900">{user?.user?.name}</h3>
-          {/* {console.log(`user : ${user}`)} */}
-          {/* {console.log(`user : ${user.user}`)} */}
+         
 
           <div className="flow-root">
             <ul className="-m-1 flex flex-wrap">
               <li className="p-1 leading-none">
                 <a href="#" className="text-xs font-medium text-gray-700">Twitter</a>
               </li>
-              <li className="p-1 leading-none">
-                <a href="#" className="text-xs font-medium text-gray-700">GitHub</a>
-              </li>
-              <li className="p-1 leading-none">
-                <a href="#" className="text-xs font-medium text-gray-700">Website</a>
-              </li>
+             
+              
             </ul>
           </div>
         </div>
@@ -39,20 +33,10 @@ function Profile() {
 
       <ul className="mt-4 space-y-2">
         <li>
-          <a href="#" className="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600">
-            <strong className="font-medium text-gray-900">Project A</strong>
-            <p className="mt-1 text-xs font-medium text-gray-700">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
-          </a>
+          
         </li>
         <li>
-          <a href="#" className="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600">
-            <strong className="font-medium text-gray-900">Project B</strong>
-            <p className="mt-1 text-xs font-medium text-gray-700">
-              Lorem ipsum dolor sit amet consectetur.
-            </p>
-          </a>
+          
         </li>
       </ul>
     </article>

@@ -117,9 +117,9 @@ function Request() {
 
   return (
     <div
-      className="relative flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-gray-100 bg-no-repeat bg-cover relative items-center"
+      className="relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-100 bg-no-repeat bg-cover"
     >
-      <div className="absolute bg-gray-200 opacity-60 inset-0 z-0"></div>
+      <div className="absolute bg-gray-200 opacity-60 inset-0 -z-30"></div>
       <div className="sm:max-w-lg w-full p-10 bg-white rounded-xl z-0">
         <div className="text-center">
           <h2 className="mt-5 text-3xl font-bold text-gray-900">Upload Request Music</h2>

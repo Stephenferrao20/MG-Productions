@@ -16,7 +16,7 @@ export default function MusicCard({ songs , refreshSongs , songFilter }) {
               <Card key={song.id} data={song} refreshSongs={refreshSongs} index={index} type="song"/>
             ))
           ) : (
-            <p>No songs to display.</p> // Or a loading indicator, or an empty state component
+            <p>No songs to display.</p> 
           )}
         </div>
       </div>

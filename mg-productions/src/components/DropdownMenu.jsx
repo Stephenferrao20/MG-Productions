@@ -1,14 +1,13 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
 
 function DropdownMenu() {
   const handleLogout = () => {
-    const auth = getAuth(); // Initialize Firebase Authentication
+    const auth = getAuth(); 
     signOut(auth)
       .then(() => {
-        // Successfully signed out
-        window.location.href = window.location.origin; // Redirect to home or login page
+        
+        window.location.href = window.location.origin; 
       })
       .catch((error) => {
         console.error('Error during logout:', error.message);
@@ -22,13 +21,6 @@ function DropdownMenu() {
         className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
       >
         view profile
-      </Link>
-
-      <Link
-        to={'/Settings'}
-        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
-      >
-        Settings
       </Link>
 
       <a
