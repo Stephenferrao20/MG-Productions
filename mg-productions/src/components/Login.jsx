@@ -7,7 +7,7 @@ import { useStateValue } from '../context/StateProvider';
 import { validateUser } from '../api';
 import { actionType } from '../context/actionType';
 
-function Login({ onClose, onSignUpOpen, setAuth }) {
+function Login({ onClose, setAuth }) {
 
   const firebaseAuth = getAuth(app);
   const provider = new GoogleAuthProvider();
@@ -94,48 +94,7 @@ function Login({ onClose, onSignUpOpen, setAuth }) {
                 />
                 Continue with Google
               </button>
-            </div>
-
-            <div className="flex w-full items-center gap-2 py-6 text-sm text-slate-600">
-              <div className="h-px w-full bg-slate-200"></div>
-              OR
-              <div className="h-px w-full bg-slate-200"></div>
-            </div>
-
-            <form className="w-full">
-              <label htmlFor="email" className="sr-only">Email address</label>
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
-                placeholder="Email Address"
-              />
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="mt-2 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
-                placeholder="Password"
-              />
-              <p className="mb-3 mt-2 text-sm text-gray-500">
-                <a href="/forgot-password" className="text-blue-800 hover:text-blue-600">Reset your password?</a>
-              </p>
-              <button
-                type="submit"
-                className="inline-flex w-full items-center justify-center rounded-lg bg-black p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 disabled:bg-gray-400"
-              >
-                Continue
-              </button>
-            </form>
-
-            <div className="mt-6 text-center text-sm text-slate-600">
-              Don&apos;t have an account?
-              <button onClick={onSignUpOpen} className="font-medium text-[#4285f4]">Sign up</button>
-            </div>
+            </div> 
           </div>
         </div>
       </div>
